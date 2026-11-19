@@ -59,7 +59,7 @@ textarea{width:100%;background:var(--bg);border:1px solid var(--ln);border-radiu
 </head>
 <body>
 <header><div class="hd"><div><h1 id="ttl" contenteditable="plaintext-only" spellcheck="false" title="Klik untuk mengubah judul">Program Kerja Pengawas Sekolah</h1>
-<div class="sub" id="sb"></div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="uname" style="font-size:13px"></span><button class="hb" id="admbtn" hidden>Kelola Pengawas</button><button class="hb" data-a="th">Tema</button><button class="hb" id="outbtn" hidden>Keluar</button></div></div>
+<div class="sub" id="sb"></div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="uname" style="font-size:13px"></span><button class="hb" id="admbtn" hidden>Kelola Pengawas</button><button class="hb" id="impbtn" hidden>Impor Data</button><button class="hb" data-a="th">Tema</button><button class="hb" id="outbtn" hidden>Keluar</button></div></div>
 <nav role="tablist" id="tabs"></nav></header>
 <input type="file" id="fi" accept=".xlsx,.xls,.csv,.pdf" hidden><input type="file" id="fi2" accept=".xlsx,.xls" hidden>
 <main id="v"></main>
@@ -280,8 +280,12 @@ return `<div class="card"><h2>Contoh &amp; status sinkronisasi</h2><p class="not
 const tabs=["Mulai","Contoh & Sinkron",...Object.keys(T).filter(k=>k!="Mulai"&&k!="Contoh & Sinkron")];let cur=0;
 function go(i){cur=i;document.getElementById("tabs").innerHTML=tabs.map((t,j)=>`<button role="tab" aria-selected="${j==i}" data-t="${j}">${j}. ${t}</button>`).join("");
  document.getElementById("v").innerHTML=T[tabs[i]]();{const h=document.getElementById("ttl"),t=D.g.judul||"Program Kerja Pengawas Sekolah";if(document.activeElement!==h)h.textContent=t;document.title=t}document.getElementById("sb").textContent=`Pengawas: ${D.g.nama||"(belum diisi)"} · ${D.g.tempat||"tempat belum diisi"} · Tahun ${D.g.thn||"-"} · ${D.sk.length} sekolah · Kelengkapan ${pct()}%`}
+const FQ="#v input,#v textarea,#v select";
+const keepGo=()=>{const x=scrollX,y=scrollY,sc=[...document.querySelectorAll("#v .scroll")].map(e=>[e.scrollLeft,e.scrollTop]),fx0=[...document.querySelectorAll(FQ)].indexOf(document.activeElement);go(cur);
+ const rs=()=>{document.querySelectorAll("#v .scroll").forEach((e,i)=>{if(sc[i]){e.scrollLeft=sc[i][0];e.scrollTop=sc[i][1]}});scrollTo(x,y)};
+ rs();if(fx0>=0){const n=document.querySelectorAll(FQ)[fx0];if(n)n.focus({preventScroll:true});rs()}};
 const setP=(p,v)=>{const k=p.split(".");let o=D;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=v};
-document.addEventListener("change",e=>{const d=e.target.dataset;if(d.f){setP(d.f,e.target.value)}else if(d.c){const[k,j,i]=d.c.split(",");D.sk[j][k][i]=e.target.checked?1:0}else if(d.r){const[j,i]=d.r.split(",");const n=parseInt(e.target.value);D.sk[j].rp[i]=n>=1&&n<=4?n:null}else return;save();const y=scrollY;go(cur);scrollTo(0,y)});
+document.addEventListener("change",e=>{const d=e.target.dataset;if(d.f){setP(d.f,e.target.value)}else if(d.c){const[k,j,i]=d.c.split(",");D.sk[j][k][i]=e.target.checked?1:0}else if(d.r){const[j,i]=d.r.split(",");const n=parseInt(e.target.value);D.sk[j].rp[i]=n>=1&&n<=4?n:null}else return;save();keepGo()});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-t],[data-a]");if(!b)return;const d=b.dataset;
  if(d.t)return go(+d.t);
  if(d.a=="th"){const r=document.documentElement,c=r.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");r.dataset.theme=c=="dark"?"light":"dark";return}
@@ -305,7 +309,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-t],[data-a
  if(d.a=="docx")return exportDocx("all");
  if(d.a=="dl")return exportDocx(d.k);
  if(d.a=="print")return print();
- save();go(cur)});
+ save();keepGo()});
 let msg="",UP=0;
 let msg2="";
 const nrm=x=>String(x||"").toLowerCase().replace(/\s+/g," ").trim();
@@ -409,9 +413,9 @@ go(0);
 </script>
 <style>
 body:not(.in) header,body:not(.in) main{display:none}
-#gate,#adm{position:fixed;inset:0;z-index:50;background:var(--bg);color:var(--ink);overflow:auto;padding:20px}
+#gate,#adm,#imp{position:fixed;inset:0;z-index:50;background:var(--bg);color:var(--ink);overflow:auto;padding:20px}
 #gate{display:flex;align-items:center;justify-content:center}
-#adm{z-index:40;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+#adm,#imp{z-index:40;padding-top:calc(20px + env(safe-area-inset-top,0px))}
 #gate[hidden]{display:none}
 #gate .card{max-width:420px;text-align:center;margin:0}
 .arow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);flex-wrap:wrap}
@@ -492,12 +496,31 @@ async function boot(u,me){
   if(!d.exists())window.__saveHook(D);
   updateDoc(doc(db,"users",u.uid),{lastLogin:serverTimestamp()}).catch(()=>{});
   $("uname").textContent=me.name||u.email;
+  $("impbtn").hidden=false;$("impbtn").onclick=()=>importer(u.uid);
   $("outbtn").hidden=false;$("outbtn").onclick=()=>signOut(auth);
   if(me.role=="admin"){
     const ab=$("admbtn");ab.hidden=false;ab.onclick=adminPanel;
     unsub.push(onSnapshot(collection(db,"users"),s=>{const n=s.docs.filter(x=>x.data().status=="pending").length;ab.textContent="Kelola Pengawas"+(n?` (${n} menunggu)`:"")}));
   }
   document.body.classList.add("in");gate.hidden=true;
+}
+
+function importer(uid){
+  if($("imp"))return;
+  const p=document.createElement("div");p.id="imp";
+  p.innerHTML=`<div style="max-width:720px;margin:auto"><div class="arow" style="border:0"><h2 style="margin:0">Impor Data Lama</h2><button class="btn bg" id="ix">Tutup</button></div><div class="card"><p class="note">Tempel data yang disalin dari aplikasi lama. Data yang ada sekarang akan diganti.</p><textarea id="itx" rows="8" placeholder="Tempel di sini…"></textarea><p><button class="btn" id="iok">Impor</button></p></div></div>`;
+  document.body.appendChild(p);
+  $("ix").onclick=()=>p.remove();
+  $("iok").onclick=async()=>{
+    try{
+      let o=JSON.parse($("itx").value.trim());if(typeof o=="string")o=JSON.parse(o);
+      if(!o||!o.sk)throw new Error("Data tidak dikenali. Pastikan yang ditempel hasil salinan dari aplikasi lama.");
+      if(!confirm("Ganti data saat ini dengan data yang ditempel?"))return;
+      window.__saveHook=()=>{};
+      await setDoc(doc(db,"data",uid),{json:JSON.stringify(o),updatedAt:serverTimestamp()});
+      location.reload();
+    }catch(e){alert(e.message)}
+  };
 }
 
 function adminPanel(){
