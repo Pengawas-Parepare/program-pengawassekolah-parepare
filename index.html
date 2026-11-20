@@ -496,7 +496,10 @@ async function enter(u){
 }
 
 function blocked(u,me){
-  if(me.status=="deleted"){
+  if(me.status=="cancelled"){
+    show(`<h2>Permintaan dibatalkan</h2><p class="note">Anda membatalkan permintaan akses untuk ${esc(u.email)}. Anda dapat mengajukannya kembali; permintaan harus disetujui admin.</p><p><button class="btn" id="rq">Ajukan Akses Kembali</button> ${outBtn}</p>`);
+    $("rq").onclick=()=>updateDoc(doc(db,"users",u.uid),{status:"pending",requestedAt:serverTimestamp()}).catch(e=>alert(e.message));
+  }else if(me.status=="deleted"){
     show(`<h2>Akun dihapus</h2><p class="note">Akun ${esc(u.email)} telah dihapus oleh admin. Anda dapat mengajukan akses kembali; permintaan harus disetujui admin.</p><p><button class="btn" id="rq">Ajukan Akses Kembali</button> ${outBtn}</p>`);
     $("rq").onclick=()=>updateDoc(doc(db,"users",u.uid),{status:"pending",requestedAt:serverTimestamp()}).catch(e=>alert(e.message));
   }else if(me.status=="pending"){
@@ -531,8 +534,12 @@ function preview(u,me){
   };
   ["click","change","input","paste","drop","keydown"].forEach(ev=>window.addEventListener(ev,guard,true));
   const bar=document.createElement("div");bar.id="pvb";
-  bar.innerHTML=`<span><b>Mode pratinjau.</b> Akun ${esc(u.email)} menunggu persetujuan admin. Anda dapat membuka semua menu (data contoh), tetapi belum bisa mengedit atau menyimpan.</span>`;
+  bar.innerHTML=`<span><b>Mode pratinjau.</b> Akun ${esc(u.email)} menunggu persetujuan admin. Anda dapat membuka semua menu (data contoh), tetapi belum bisa mengedit atau menyimpan.</span> <button class="hb" id="pvc">Batalkan permintaan</button>`;
   document.body.prepend(bar);
+  $("pvc").onclick=async()=>{
+    if(!confirm("Batalkan permintaan akses? Anda dapat mengajukannya kembali kapan saja."))return;
+    try{await updateDoc(doc(db,"users",u.uid),{status:"cancelled",cancelledAt:serverTimestamp()})}catch(e){alert(e.message)}
+  };
   new MutationObserver(lockUI).observe($("v"),{childList:true,subtree:true});
   gate.hidden=true;
   const sc=document.createElement("script");sc.textContent=$("app-src").textContent;document.body.appendChild(sc);
@@ -591,7 +598,7 @@ function adminPanel(){
     $("al").innerHTML=
       sec("Menunggu persetujuan","Tidak ada permintaan.",g("pending"),x=>bt(x.id,"ok","Setujui")+bt(x.id,"no","Tolak","bg"))+
       sec("Pengawas aktif","Belum ada pengawas lain.",g("approved"),x=>bt(x.id,"del","Hapus","dn"))+
-      sec("Dihapus / ditolak","Kosong.",a.filter(x=>x.role!="admin"&&(x.status=="deleted"||x.status=="rejected")),x=>`<span class="note">${x.status=="deleted"?"Dihapus":"Ditolak"}</span> `+bt(x.id,"ok","Pulihkan","bg"));
+      sec("Dihapus / ditolak / dibatalkan","Kosong.",a.filter(x=>x.role!="admin"&&(x.status=="deleted"||x.status=="rejected"||x.status=="cancelled")),x=>`<span class="note">${x.status=="deleted"?"Dihapus":x.status=="cancelled"?"Dibatalkan":"Ditolak"}</span> `+bt(x.id,"ok","Pulihkan","bg"));
   });
   p.addEventListener("click",async e=>{
     const b=e.target.closest("[data-op]");
