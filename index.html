@@ -435,6 +435,10 @@ body:not(.in) header,body:not(.in) main{display:none}
 #gate .card{max-width:420px;text-align:center;margin:0}
 .arow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ln);flex-wrap:wrap}
 .btn.dn{background:var(--c1)}
+#pvb{position:sticky;top:0;z-index:20;background:var(--c5,#b45309);color:#fff;padding:8px 14px;font-size:13.5px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+body.ro button:disabled,body.ro .btn:disabled{opacity:.45;cursor:not-allowed}
+body.ro #v input:disabled,body.ro #v textarea:disabled,body.ro #v select:disabled{opacity:.85;cursor:not-allowed}
+body.ro h1[contenteditable]{cursor:default}body.ro h1[contenteditable]:hover{outline:0}
 </style>
 <div id="gate"></div>
 <script type="module">
@@ -460,7 +464,7 @@ const gate=$("gate");
 const show=h=>{gate.hidden=false;gate.innerHTML=`<div class="card">${h}</div>`};
 const outBtn=`<button class="btn bg" id="lo">Keluar</button>`;
 const bindOut=()=>{const b=$("lo");if(b)b.onclick=()=>signOut(auth)};
-let unsub=[],booted=false;
+let unsub=[],booted=false,mode=null; // mode: null | "full" | "preview"
 
 onAuthStateChanged(auth,async u=>{
   unsub.forEach(f=>f());unsub=[];
@@ -479,12 +483,14 @@ async function enter(u){
   const s=await getDoc(ref);
   if(!s.exists()){
     const adm=(u.email||"").toLowerCase()==ADMIN_EMAIL.toLowerCase();
-    await setDoc(ref,{email:u.email,name:u.displayName||u.email,role:adm?"admin":"pengawas",status:"approved",createdAt:serverTimestamp(),lastLogin:serverTimestamp()});
+    await setDoc(ref,{email:u.email,name:u.displayName||u.email,role:adm?"admin":"pengawas",status:adm?"approved":"pending",createdAt:serverTimestamp(),lastLogin:serverTimestamp()});
   }
   unsub.push(onSnapshot(ref,snap=>{
     const me=snap.data();if(!me)return;
-    if(me.status=="approved"){if(!booted)boot(u,me)}
-    else if(booted)location.reload();
+    const want=me.status=="approved"?"full":me.status=="pending"?"preview":null;
+    if(mode){if(mode!==want)location.reload();return}
+    if(want=="full")boot(u,me);
+    else if(want=="preview")preview(u,me);
     else blocked(u,me);
   }));
 }
@@ -501,8 +507,43 @@ function blocked(u,me){
   bindOut();
 }
 
+/* ===== Pratinjau baca-saja untuk akun yang belum disetujui admin ===== */
+const RO_OK=new Set(["th","pm","tm"]); // hanya ganti tema & bulan (tampilan saja)
+function lockUI(){
+  document.querySelectorAll("#v input,#v textarea,#v select").forEach(el=>{el.disabled=true});
+  document.querySelectorAll("#v [data-a],header [data-a]").forEach(b=>{if(!RO_OK.has(b.dataset.a)){b.disabled=true;b.title="Tersedia setelah disetujui admin"}});
+  const t=$("ttl");t.contentEditable="false";t.removeAttribute("title");
+}
+function preview(u,me){
+  booted=true;mode="preview";
+  window.__RO=true;window.__UD=null;window.__saveHook=null; // tidak membaca/menulis data apa pun
+  document.body.classList.add("ro");
+  // blokir semua aksi selain navigasi tab, tema, dan pilih bulan
+  const guard=e=>{
+    const t=e.target;if(!t||!t.closest)return;
+    if(e.type=="click"){
+      const b=t.closest("[data-t],[data-a]");
+      if(!b||b.dataset.t!==undefined||RO_OK.has(b.dataset.a))return;
+      e.stopImmediatePropagation();e.preventDefault();return;
+    }
+    if(e.type=="keydown"&&!t.closest("#v,#ttl"))return;
+    if(t.closest("#v input,#v textarea,#v select,#ttl")){e.stopImmediatePropagation();e.preventDefault()}
+  };
+  ["click","change","input","paste","drop","keydown"].forEach(ev=>window.addEventListener(ev,guard,true));
+  const bar=document.createElement("div");bar.id="pvb";
+  bar.innerHTML=`<span><b>Mode pratinjau.</b> Akun ${esc(u.email)} menunggu persetujuan admin. Anda dapat membuka semua menu (data contoh), tetapi belum bisa mengedit atau menyimpan.</span>`;
+  document.body.prepend(bar);
+  new MutationObserver(lockUI).observe($("v"),{childList:true,subtree:true});
+  gate.hidden=true;
+  const sc=document.createElement("script");sc.textContent=$("app-src").textContent;document.body.appendChild(sc);
+  lockUI();
+  $("uname").textContent=me.name||u.email;
+  $("outbtn").hidden=false;$("outbtn").onclick=()=>signOut(auth);
+  document.body.classList.add("in");
+}
+
 async function boot(u,me){
-  booted=true;
+  booted=true;mode="full";
   const d=await getDoc(doc(db,"data",u.uid));
   if(d.exists()){try{window.__UD=JSON.parse(d.data().json)}catch(e){}}
   let t;
