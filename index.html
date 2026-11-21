@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<script>(function(){var U="https://pengawas-parepare.github.io/program-pengawassekolah-parepare/",h=location.hostname;if(location.href.indexOf(U)===0||h==="localhost"||h==="127.0.0.1")return;location.replace(U+location.hash)})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Program Kerja Pengawas Sekolah</title>
@@ -273,6 +274,7 @@ const EXPF={jd:expJ,jd2:expJ2},JF={jd:JD,jd2:JD2};
 const sj=(s,k)=>{if(!st(s))return null;const a=JF[k](s);let d=0,t=0,x=0;for(let m=0;m<6;m++){const e=EXPF[k](s,m);if(e===null)continue;const w=a.slice(m*4,m*4+4).some(Boolean);if(e){t++;if(w)d++}else if(w)x++}return[d,t,x]};
 const badJ=(s,k)=>{const r=sj(s,k);return r?r[1]-r[0]+r[2]:0};
 function syncJ(s,i,k,z){if(!st(s))return;const a=JF[k](s);for(let m=0;m<6;m++){const e=EXPF[k](s,m);if(e===null)continue;const w=a.slice(m*4,m*4+4).some(Boolean);if(e&&!w)a[m*4+i%4]=1;if(e===false&&z)for(let x=0;x<4;x++)a[m*4+x]=0}}
+if(window.__EXD&&window.__EXD.sk&&window.__EXD.g){EX.g=window.__EXD.g;EX.sk=window.__EXD.sk}
 EX.sk.forEach((s,i)=>{syncJ(s,i,"jd",1);syncJ(s,i,"jd2",1)});if(FRESH)D=JSON.parse(JSON.stringify(EX)),loadInd();
 const FX={
 sk:(s,i)=>{if(emp(s.n))s.n="Sekolah Contoh "+(i+1);if(emp(s.id))s.id=String(10800100+i)},
@@ -466,7 +468,7 @@ const ADMIN_EMAIL = "buktikerja.makmurnonci@gmail.com"; // email Google admin (h
 /* ============================================================== */
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,updateDoc,collection,onSnapshot,serverTimestamp,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import {getFirestore,doc,getDoc,setDoc,deleteDoc,updateDoc,collection,onSnapshot,serverTimestamp,writeBatch} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
@@ -523,13 +525,14 @@ function blocked(u,me){
 
 /* ===== Pratinjau baca-saja untuk akun yang belum disetujui admin ===== */
 const RO_OK=new Set(["th","pm","tm"]); // hanya ganti tema & bulan (tampilan saja)
+async function loadDefault(){try{const d=await getDoc(doc(db,"config","default"));if(d.exists())window.__EXD=JSON.parse(d.data().json)}catch(e){}}
 function lockUI(){
   document.querySelectorAll("#v input,#v textarea,#v select").forEach(el=>{el.disabled=true});
   document.querySelectorAll("#v [data-a],header [data-a]").forEach(b=>{if(!RO_OK.has(b.dataset.a)){b.disabled=true;b.title="Tersedia setelah disetujui admin"}});
   const t=$("ttl");t.contentEditable="false";t.removeAttribute("title");
 }
-function preview(u,me){
-  booted=true;mode="preview";
+async function preview(u,me){
+  booted=true;mode="preview";await loadDefault();
   window.__RO=true;window.__UD=null;window.__saveHook=null; // tidak membaca/menulis data apa pun
   document.body.classList.add("ro");
   // blokir semua aksi selain navigasi tab, tema, dan pilih bulan
@@ -561,7 +564,7 @@ function preview(u,me){
 }
 
 async function boot(u,me){
-  booted=true;mode="full";window.__isAdmin=me.role=="admin";window.__fillLocked=true;
+  booted=true;mode="full";window.__isAdmin=me.role=="admin";window.__fillLocked=true;await loadDefault();
   const d=await getDoc(doc(db,"data",u.uid));
   if(d.exists()){try{window.__UD=JSON.parse(d.data().json)}catch(e){}}
   let t;
@@ -598,13 +601,23 @@ function importer(uid){
   };
 }
 
+async function saveDefault(){
+  if(!confirm("Jadikan data Anda saat ini sebagai contoh default? Contoh ini dipakai pengawas baru dan tombol Muat data contoh. Identitas pengawas (nama, NIP, dll.) dikosongkan."))return;
+  try{
+    const o=JSON.parse(JSON.stringify(D));
+    ["nama","nip","pangkat","jab","korwas","nipk","kadis","pkd","nipkd"].forEach(k=>{if(o.g&&k in o.g)o.g[k]=""});
+    o.sk.forEach(s=>{s.rp=BASE.map(c=>{const k=IND.indexOf(c);return k>=0?(s.rp[k]??null):null})});
+    await setDoc(doc(db,"config","default"),{json:JSON.stringify({g:o.g,sk:o.sk}),updatedAt:serverTimestamp()});
+    alert("Tersimpan. Pengawas baru dan tombol Muat data contoh kini memakai data ini.");
+  }catch(e){alert(e.message)}
+}
 function paintFl(){document.body.classList.toggle("fl",!!window.__fillLocked&&!window.__isAdmin);const b=$("flb"),t=$("fls");if(b)b.textContent=window.__fillLocked?"Buka kunci":"Kunci";if(t)t.textContent=window.__fillLocked?"Terkunci: pengawas tidak bisa memakai tombol Isi contoh yang kosong.":"Terbuka: pengawas bisa memakai tombol Isi contoh yang kosong."}
 
 function adminPanel(){
   if($("adm"))return;
   const p=document.createElement("div");p.id="adm";
-  p.innerHTML=`<div style="max-width:820px;margin:auto"><div class="arow" style="border:0"><h2 style="margin:0">Kelola Pengawas</h2><button class="btn bg" id="ax">Tutup</button></div><div class="card"><h3>Tombol "Isi contoh yang kosong"</h3><p class="note" id="fls"></p><button class="btn" id="flb"></button></div><div id="al"></div></div>`;
-  document.body.appendChild(p);paintFl();$("flb").onclick=()=>setDoc(doc(db,"config","app"),{fillLocked:!window.__fillLocked}).catch(e=>alert(e.message));
+  p.innerHTML=`<div style="max-width:820px;margin:auto"><div class="arow" style="border:0"><h2 style="margin:0">Kelola Pengawas</h2><button class="btn bg" id="ax">Tutup</button></div><div class="card"><h3>Tombol "Isi contoh yang kosong"</h3><p class="note" id="fls"></p><button class="btn" id="flb"></button></div><div class="card"><h3>Contoh data default</h3><p class="note">Data contoh yang dipakai pengawas baru dan tombol Muat data contoh.</p><button class="btn" id="dfs">Jadikan data saya sebagai contoh</button> <button class="btn bg" id="dfr">Kembalikan contoh bawaan</button></div><div id="al"></div></div>`;
+  document.body.appendChild(p);$("dfs").onclick=saveDefault;$("dfr").onclick=async()=>{if(confirm("Kembalikan ke contoh bawaan aplikasi?"))try{await deleteDoc(doc(db,"config","default"));alert("Dikembalikan.")}catch(e){alert(e.message)}};paintFl();$("flb").onclick=()=>setDoc(doc(db,"config","app"),{fillLocked:!window.__fillLocked}).catch(e=>alert(e.message));
   const bt=(id,op,l,c)=>`<button class="btn ${c||""}" data-id="${id}" data-op="${op}">${l}</button> `;
   const sec=(t,n,list,f)=>`<div class="card"><h3>${t} (${list.length})</h3>${list.length?list.map(x=>`<div class="arow"><div>${esc(x.name)}<br><span class="note">${esc(x.email)}</span></div><div>${f(x)}</div></div>`).join(""):`<p class="empty">${n}</p>`}</div>`;
   const un=onSnapshot(collection(db,"users"),s=>{
@@ -612,7 +625,7 @@ function adminPanel(){
     $("al").innerHTML=
       sec("Menunggu persetujuan","Tidak ada permintaan.",g("pending"),x=>bt(x.id,"ok","Setujui")+bt(x.id,"no","Tolak","bg"))+
       sec("Pengawas aktif","Belum ada pengawas lain.",g("approved"),x=>bt(x.id,"del","Hapus","dn"))+
-      sec("Dihapus / ditolak / dibatalkan","Kosong.",a.filter(x=>x.role!="admin"&&(x.status=="deleted"||x.status=="rejected"||x.status=="cancelled")),x=>`<span class="note">${x.status=="deleted"?"Dihapus":x.status=="cancelled"?"Dibatalkan":"Ditolak"}</span> `+bt(x.id,"ok","Pulihkan","bg"));
+      sec("Dihapus / ditolak / dibatalkan","Kosong.",a.filter(x=>x.role!="admin"&&(x.status=="deleted"||x.status=="rejected"||x.status=="cancelled")),x=>`<span class="note">${x.status=="deleted"?"Dihapus":x.status=="cancelled"?"Dibatalkan":"Ditolak"}</span> `+bt(x.id,"ok","Pulihkan","bg")+bt(x.id,"rm","Hapus permanen","dn"));
   });
   p.addEventListener("click",async e=>{
     const b=e.target.closest("[data-op]");
@@ -622,6 +635,10 @@ function adminPanel(){
     try{
       if(op=="ok")await updateDoc(ref,{status:"approved"});
       else if(op=="no")await updateDoc(ref,{status:"rejected"});
+      else if(op=="rm"){
+        if(!confirm("Hapus permanen catatan akun ini dari daftar? Jika ia login lagi, akan masuk sebagai permintaan baru yang harus Anda setujui."))return;
+        const w=writeBatch(db);w.delete(ref);w.delete(doc(db,"data",id));await w.commit();
+      }
       else if(op=="del"){
         if(!confirm("Hapus akun pengawas ini beserta seluruh datanya? Untuk masuk lagi, ia harus meminta persetujuan Anda."))return;
         const w=writeBatch(db);w.update(ref,{status:"deleted"});w.delete(doc(db,"data",id));await w.commit();
