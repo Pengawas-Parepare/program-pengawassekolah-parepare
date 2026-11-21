@@ -23,7 +23,10 @@ button,select,input{font:inherit;color:inherit}
 h1[contenteditable]{cursor:text;border-radius:4px;outline-offset:3px}h1[contenteditable]:hover{outline:1px dashed currentColor}h1[contenteditable]:focus{outline:2px solid currentColor}
 .hb{background:transparent;border:1px solid currentColor;border-radius:6px;padding:4px 10px;cursor:pointer;opacity:.9}
 nav{max-width:1100px;margin:14px auto 0;display:flex;gap:4px;overflow-x:auto}
-nav button{background:transparent;border:0;padding:9px 14px;border-radius:8px 8px 0 0;cursor:pointer;opacity:.85;white-space:nowrap;font-weight:500;color:var(--hf)}
+nav button{background:color-mix(in srgb,var(--tc,#888) 30%,transparent);border:0;border-top:4px solid var(--tc,#888);padding:9px 14px;border-radius:8px 8px 0 0;cursor:pointer;opacity:.85;white-space:nowrap;font-weight:500;color:var(--hf)}
+body.fl [data-a=fx],body.fl [data-a=fxr],body.fl [data-a=sj]{opacity:.5}
+body.fl [data-a=fx]::after,body.fl [data-a=fxr]::after,body.fl [data-a=sj]::after{content:" 🔒"}
+main h2{border-left:6px solid var(--tcur,transparent);padding-left:10px}
 nav button[aria-selected=true]{background:var(--bg);color:var(--ink);opacity:1;font-weight:600}
 main{max-width:1100px;margin:auto;padding:20px}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px}
@@ -60,7 +63,7 @@ textarea{width:100%;background:var(--bg);border:1px solid var(--ln);border-radiu
 <body>
 <header><div class="hd"><div><h1 id="ttl" contenteditable="plaintext-only" spellcheck="false" title="Klik untuk mengubah judul">Program Kerja Pengawas Sekolah</h1>
 <div class="sub" id="sb"></div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="uname" style="font-size:13px"></span><button class="hb" id="admbtn" hidden>Kelola Pengawas</button><button class="hb" id="impbtn" hidden>Impor Data</button><button class="hb" data-a="th">Tema</button><button class="hb" id="outbtn" hidden>Keluar</button></div></div>
-<nav role="tablist" id="tabs"></nav></header>
+<div class="np" style="max-width:1100px;margin:10px auto 0;display:flex;gap:14px;flex-wrap:wrap;font-size:12px"><span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1f8fd1;margin-right:5px"></i>Tahap I (Jan–Mar)</span><span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2e9e5b;margin-right:5px"></i>Tahap II (Apr–Jun)</span><span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#e08a00;margin-right:5px"></i>Tahap III (Jul–Sep)</span><span><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8e5bd6;margin-right:5px"></i>Tahap IV (Okt–Des)</span></div><nav role="tablist" id="tabs"></nav></header>
 <input type="file" id="fi" accept=".xlsx,.xls,.csv,.pdf" hidden><input type="file" id="fi2" accept=".xlsx,.xls" hidden>
 <main id="v"></main>
 <script type="text/plain" id="app-src">
@@ -203,7 +206,7 @@ const ems=()=>'<span class="empty">Isi di Catatan Diskusi</span>';
 let tm="jul",tm4="okt";
 const tmq=q=>q==4?tm4:tm;
 const twck=M=>s=>{if(!st(s))return null;let d=0,t=0;M.forEach(m=>{if(!act(s,m))return;const r=TW(s,m);TWF.forEach(([f])=>{t++;if(!emp(r[f]))d++})});return[d,t]};
-const twfx=M=>(s,i)=>{if(!st(s))return;const t=src(i,s).tw;M.forEach(m=>{if(!act(s,m))return;const r=TW(s,m),a=t[m]||t[TWM[ALLM.indexOf(m)%3]]||t[Object.keys(t)[0]];TWF.forEach(([f])=>{if(emp(r[f]))r[f]=a[f]})})};
+const twfx=M=>(s,i)=>{if(!st(s))return;const t=src(i,s).tw;M.forEach(m=>{if(!act(s,m))return;const r=TW(s,m),a=t[m]||t[TWM[ALLM.indexOf(m)%3]]||t[Object.keys(t)[0]];TWF.forEach(([f])=>{if(emp(r[f])||foreign(r[f],jen(s.n)))r[f]=a[f]})})};
 const twP=q=>{const Q=TWQ[q],M=Q.M,o=order(),dt=i=>D.g["t"+Q.t[i]];return `<div class="card"><h2>${dlb(Q.k.p)}Pendampingan pelaksanaan program kerja satuan pendidikan, ${Q.nm} ${E(D.g.thn)}</h2><p class="note">Diskusi, umpan balik, dan dukungan unjuk kerja ${Q.rg}. Sekolah, prioritas, dan strategi otomatis mengikuti Lampiran 1–7. Prioritas utama didampingi sejak ${TWN[M[0]]}, menengah mulai ${TWN[M[1]]}, akhir pada ${TWN[M[2]]}.</p><div class="fg">${M.map((m,i)=>fld(`Tanggal kegiatan bulan ${Q.ro[i]} (${TWN[m]})`,"g.t"+Q.t[i],dt(i))).join("")}</div><div class="scroll" style="margin-top:12px"><table><thead><tr><th>No.</th><th>Prioritas</th><th>Nama sekolah</th><th>Strategi</th><th>Metode</th>${M.map(m=>`<th>${TWN[m]}<br><span class="empty">${E(tdt(m))}</span></th>`).join("")}</tr></thead><tbody>${o.map((s,i)=>`<tr><td>${i+1}</td><td>Prioritas ${INFO[s.st].p.toLowerCase()}</td><td><b>${E(s.n)}</b></td><td>${tag(s.st)}</td><td>${MET[INFO[s.st].p]}</td>${M.map(m=>`<td>${act(s,m)?"Bukti dukung dan dokumentasi":"-"}</td>`).join("")}</tr>`).join("")||'<tr><td colspan="8">Belum ada data. Isi Lampiran 1 dan 3 lebih dulu.</td></tr>'}</tbody></table></div><div class="rs">${M.map(m=>`<div><b>${TWN[m]}:</b> ${TWK[m]}</div>`).join("")}</div>${sig(dt(2)||dt(1)||dt(0))}<p class="np"><button class="btn" data-a="docx">Unduh semua (.docx)</button> <button class="btn bg" data-a="print">Cetak / simpan PDF</button></p></div>`};
 const twC=q=>{const Q=TWQ[q],M=Q.M,m0=tmq(q),o=order(),pv=ALLM[ALLM.indexOf(m0)-1];let h=`<div class="card"><h2>${dlb(Q.k.cd)}Catatan diskusi pelaksanaan program kerja, bulan ${TWN[m0]}</h2><p class="note">Isi satu butir per baris. Isian ini otomatis tersambung ke tab ${Q.tag} Dukungan &amp; Umpan Balik (kendala, kelebihan, kondisi real, dan seterusnya).</p><div class="mt np">${M.map(m=>`<button class="btn ${m==m0?"":"bg"}" data-a="tm" data-m="${m}">${TWN[m]}</button>`).join("")}</div><p class="note">${TWK[m0]}.</p><p class="np">${fxb(q==4?"tw4":"tw","Isi contoh semua bulan yang kosong")}</p></div>`;
  o.forEach((s,i)=>{const j=D.sk.indexOf(s),r=TW(s,m0),p=`sk.${j}.tw.${m0}.`;let b="";
@@ -253,7 +256,12 @@ tk:[{pb:{am:"Kualitas pembelajaran melalui bermain: capaian 46,00, dengan trend 
 {pb:{am:"Kualitas pembelajaran melalui bermain: capaian 68,50, dengan trend naik 4%\nKemitraan dengan orang tua: capaian 70,00, dengan trend naik 3%\nKepemimpinan satuan: capaian 67,80, dengan trend tidak berubah",po:"1. Kepala satuan berpengalaman dan visioner.\n2. Pendidik kreatif membuat alat main dari bahan lokal.\n3. Satuan dipercaya masyarakat dan didukung desa.",ha:"1. Kebijakan dan anggaran satuan menguatkan pembelajaran bermain yang berpusat pada anak.\n2. Praktik baik dibagikan ke satuan PAUD lain.\n3. Transisi PAUD ke SD berjalan menyenangkan.",ip:"1. Penyusunan RKAS berbasis Rapor Pendidikan PAUD.\n2. Berbagi praktik baik pada forum gugus PAUD.\n3. Pengembangan kurikulum operasional satuan yang kontekstual."},
  tw:{sep:["RKAS berbasis Rapor Pendidikan dan berbagi praktik baik di gugus PAUD","Pendidik solid dan kolaboratif","Berbagi praktik baik belum terjadwal","Praktik baik yang sudah berjalan disebutkan dan diperkuat dengan rencana penguasaan lanjutan","Kebijakan satuan selaras dengan pembelajaran berpusat pada anak","Menjadwalkan berbagi praktik baik tiap bulan di gugus PAUD"]}}]};
 const jen=n=>{n=String(n||"").toLowerCase().trim().replace(/^(upt[dk]?|upb|unit pelaksana teknis( daerah)?)\s+/,"");if(/^(sekolah dasar|madrasah ibtidaiyah)/.test(n))n="sd "+n;else if(/^(sekolah menengah pertama|madrasah tsanawiyah)/.test(n))n="smp "+n;else if(/^(sekolah menengah atas|madrasah aliyah)/.test(n))n="sma "+n;else if(/^(taman kanak|kelompok bermain|raudhatul)/.test(n))n="tk "+n;const w=n.split(/[\s\d./-]+/)[0];if(/^(tk[ns]?|paud|kb|ra|tpa|sps|kober|bustanul|tkit|tkq)$/.test(w)||/\b(paud|taman kanak)/.test(n))return"tk";if(/^(sd[ns]?|sdit|sdn|mi[ns]?|sdlb)$/.test(w))return"sd";if(/^(smp[ns]?|smpit|mts[ns]?|smplb)$/.test(w))return"smp";if(/^(sma[ns]?|smau|sman|ma[ns]?|smait|smalb)$/.test(w))return"sma";return null};
-const src=(i,s)=>{const j=s&&jen(s.n);if(!j||!st(s))return EX.sk[i%EX.sk.length];const v=SJ[j][{Utama:0,Menengah:1,Akhir:2}[INFO[s.st].p]],o={pb:{},tw:{}};MK.forEach(m=>o.pb[m]=v.pb);for(const m in v.tw){const a=v.tw[m];o.tw[m]={pp:a[0],kl:a[1],kr:a[2],ub:a[3],pr:a[4],rt:a[5]}}return o};
+let SMPL=null;
+const foreign=(t,j)=>{if(!SMPL){SMPL=new Map();const add=(x,o)=>{x=String(x||"").trim();if(x){if(!SMPL.has(x))SMPL.set(x,new Set());SMPL.get(x).add(o)}};
+ EX.sk.forEach(e=>{Object.values(e.pb||{}).forEach(r=>Object.values(r).forEach(x=>add(x,"smk")));Object.values(e.tw||{}).forEach(r=>Object.values(r).forEach(x=>add(x,"smk")))});
+ for(const o in SJ)SJ[o].forEach(v=>{Object.values(v.pb).forEach(x=>add(x,o));Object.values(v.tw).forEach(a=>a.forEach(x=>add(x,o)))})}
+ const o=SMPL.get(String(t||"").trim());return!!o&&!o.has(j||"smk")};
+const src=(i,s)=>{const j=s&&jen(s.n);if(!j||!SJ[j]||!st(s))return EX.sk[i%EX.sk.length];const v=SJ[j][{Utama:0,Menengah:1,Akhir:2}[INFO[s.st].p]],o={pb:{},tw:{}};MK.forEach(m=>o.pb[m]=v.pb);for(const m in v.tw){const a=v.tw[m];o.tw[m]={pp:a[0],kl:a[1],kr:a[2],ub:a[3],pr:a[4],rt:a[5]}}return o};
 SJ.sma=SJ.smp;
 const EXS=new Set();(function c(o){if(typeof o=="string"){if(o.trim())EXS.add(o)}else if(o&&typeof o=="object")Object.values(o).forEach(c)})([EX.sk.map(x=>[x.pb,x.tw]),typeof TWX!="undefined"?TWX:0]);
 function lvFit(){let n=0;(D.sk||[]).forEach(s=>{const j=jen(s.n);if(!j||!SJ[j]||!st(s))return;const v=SJ[j][{Utama:0,Menengah:1,Akhir:2}[INFO[s.st].p]];if(!v)return;
@@ -271,13 +279,13 @@ sk:(s,i)=>{if(emp(s.n))s.n="Sekolah Contoh "+(i+1);if(emp(s.id))s.id=String(1080
 kp:(s,i)=>{if(!any(s.kp))s.kp=[...src(i).kp]},
 mp:(s,i)=>{if(!any(s.mp))s.mp=[...src(i).mp]},
 rp:(s,i)=>{if(s.ik||jen(s.n)=="tk")return;const a=src(i).rp;s.rp=IND.map((x,k)=>{const b=BASE.indexOf(x);return isNA(s,x)?null:(s.rp[k]??(b>=0?a[b]:null))})},
-pb:(s,i)=>{if(!st(s))return;MK.forEach(m=>{if(kg(s,m)=="-")return;const r=PB(s,m),a=src(i,s).pb[m];["am","po","ha","ip"].forEach(f=>{if(emp(r[f]))r[f]=a[f]})})},
+pb:(s,i)=>{if(!st(s))return;MK.forEach(m=>{if(kg(s,m)=="-")return;const r=PB(s,m),a=src(i,s).pb[m];["am","po","ha","ip"].forEach(f=>{if(emp(r[f])||foreign(r[f],jen(s.n)))r[f]=a[f]})})},
 lk:s=>{if(emp(s.lpbd))s.lpbd="https://drive.contoh.id/pbd-"+slug(s.n);if(emp(s.lrkt))s.lrkt="https://drive.contoh.id/rkt-"+slug(s.n)},
 tw:twfx(TWM),tw4:twfx(TWQ[4].M),
 jd:(s,i,z)=>syncJ(s,i,"jd",z),jd2:(s,i,z)=>syncJ(s,i,"jd2",z)};
 const FXK=["sk","kp","mp","rp","pb","lk","tw","tw4","jd","jd2"];
 const fillId=()=>Object.keys(EX.g).forEach(k=>{if(emp(D.g[k]))D.g[k]=EX.g[k]});
-function fx(k,z,j){if(k=="all"||k=="id")fillId();const ks=k=="all"?FXK:k=="id"?[]:[k];D.sk.forEach((s,i)=>{if(j!=null&&i!=j)return;ks.forEach(x=>FX[x](s,i,z))})}
+function fx(k,z,j){if(window.__fillLocked&&!window.__isAdmin){alert("Fitur isi contoh yang kosong sedang dikunci admin. Hubungi admin untuk membukanya.");return}if(k=="all"||k=="id")fillId();const ks=k=="all"?FXK:k=="id"?[]:[k];D.sk.forEach((s,i)=>{if(j!=null&&i!=j)return;ks.forEach(x=>FX[x](s,i,z))})}
 const fxb=(k,l)=>`<button class="btn bg np" data-a="fx" data-k="${k}">${l||"Isi contoh yang kosong"}</button>`;
 const rh=s=>{const a=ap(s),l=IND.filter((x,k)=>a[k]==1);return a.some(x=>x!=null)?"Indikator Rapor Pendidikan berskor 1 (acuan akar masalah): "+(l.join(", ")||"tidak ada"):"Skor Rapor Pendidikan belum diisi (lihat menu Rapor Pendidikan)."};
 const jinfo=(k,o)=>{const n=o.reduce((a,s)=>a+badJ(s,k),0);return `<div class="rs np"><b>Sinkronisasi dengan prioritas:</b> ${n?`${n} bulan belum sesuai. Sel abu-abu = bulan tanpa kegiatan; bulan kegiatan perlu minimal satu minggu.`:"semua baris sudah sesuai."}<br><button class="btn bg" data-a="sj" data-k="${k}">Sinkronkan otomatis</button> ${fxb(k,"Isi contoh minggu yang kosong")}</div>`};
@@ -292,7 +300,10 @@ return `<div class="card"><h2>Contoh &amp; status sinkronisasi</h2><p class="not
 <p class="np"><button class="btn" data-a="fx" data-k="all">Isi contoh semua yang kosong</button> ${fxb("id","Isi identitas &amp; tanggal")} <button class="btn bg" data-a="sj" data-k="all">Sinkronkan jadwal</button> <button class="btn bg" data-a="imp">Impor TW-IV dari Excel</button></p>${msg2?`<p class="note">${E(msg2)}</p>`:""}
 <div class="scroll"><table class="ct"><thead><tr><th>No.</th><th>Sekolah</th><th>Strategi</th>${CK.map(c=>`<th>${c[0]}</th>`).join("")}<th></th></tr></thead><tbody>${D.sk.map((s,j)=>`<tr><td>${j+1}</td><td><b>${E(s.n)||"(tanpa nama)"}</b></td><td>${tag(st(s))}</td>${CK.map(c=>`<td>${cell(s,c)}</td>`).join("")}<td><button class="btn bg np" data-a="fxr" data-j="${j}">Isi sekolah ini</button></td></tr>`).join("")}<tr class="np"><td></td><td><b>Isi per kolom</b></td><td></td>${CK.map(c=>`<td><button class="btn bg" data-a="fx" data-k="${c[1]}">Isi</button></td>`).join("")}<td></td></tr></tbody></table></div></div>`};
 const tabs=["Mulai","Contoh & Sinkron",...Object.keys(T).filter(k=>k!="Mulai"&&k!="Contoh & Sinkron")];let cur=0;
-function go(i){cur=i;if(lvFit())save();document.getElementById("tabs").innerHTML=tabs.map((t,j)=>`<button role="tab" aria-selected="${j==i}" data-t="${j}">${j}. ${t}</button>`).join("");
+const THC=["#1f8fd1","#2e9e5b","#e08a00","#8e5bd6"],TAH={2:0,3:0,4:0,5:0,6:0,7:1,8:1,9:1,10:2,11:2,12:2,13:3,14:3,15:3};
+const TCs=j=>j==16?`--tc:${THC[2]};border-image:linear-gradient(90deg,${THC[2]},${THC[3]}) 1`:`--tc:${TAH[j]!=null?THC[TAH[j]]:"#8a99a6"}`;
+const TCc=i=>TAH[i]!=null?THC[TAH[i]]:(i==16?THC[2]:"transparent");
+function go(i){cur=i;document.body.style.setProperty("--tcur",TCc(i));if(lvFit())save();document.getElementById("tabs").innerHTML=tabs.map((t,j)=>`<button role="tab" aria-selected="${j==i}" data-t="${j}" style="${TCs(j)}">${j}. ${t}</button>`).join("");
  document.getElementById("v").innerHTML=T[tabs[i]]();{const h=document.getElementById("ttl"),t=D.g.judul||"Program Kerja Pengawas Sekolah";if(document.activeElement!==h)h.textContent=t;document.title=t}document.getElementById("sb").textContent=`Pengawas: ${D.g.nama||"(belum diisi)"} · ${D.g.tempat||"tempat belum diisi"} · Tahun ${D.g.thn||"-"} · ${D.sk.length} sekolah · Kelengkapan ${pct()}%`}
 const FQ="#v input,#v textarea,#v select";
 const keepGo=()=>{const x=scrollX,y=scrollY,sc=[...document.querySelectorAll("#v .scroll")].map(e=>[e.scrollLeft,e.scrollTop]),fx0=[...document.querySelectorAll(FQ)].indexOf(document.activeElement);go(cur);
@@ -550,7 +561,7 @@ function preview(u,me){
 }
 
 async function boot(u,me){
-  booted=true;mode="full";
+  booted=true;mode="full";window.__isAdmin=me.role=="admin";window.__fillLocked=true;
   const d=await getDoc(doc(db,"data",u.uid));
   if(d.exists()){try{window.__UD=JSON.parse(d.data().json)}catch(e){}}
   let t;
@@ -565,6 +576,7 @@ async function boot(u,me){
     const ab=$("admbtn");ab.hidden=false;ab.onclick=adminPanel;
     unsub.push(onSnapshot(collection(db,"users"),s=>{const n=s.docs.filter(x=>x.data().status=="pending").length;ab.textContent="Kelola Pengawas"+(n?` (${n} menunggu)`:"")}));
   }
+  unsub.push(onSnapshot(doc(db,"config","app"),s=>{window.__fillLocked=s.exists()?s.data().fillLocked!==false:true;paintFl()},()=>{}));
   document.body.classList.add("in");gate.hidden=true;
 }
 
@@ -586,11 +598,13 @@ function importer(uid){
   };
 }
 
+function paintFl(){document.body.classList.toggle("fl",!!window.__fillLocked&&!window.__isAdmin);const b=$("flb"),t=$("fls");if(b)b.textContent=window.__fillLocked?"Buka kunci":"Kunci";if(t)t.textContent=window.__fillLocked?"Terkunci: pengawas tidak bisa memakai tombol Isi contoh yang kosong.":"Terbuka: pengawas bisa memakai tombol Isi contoh yang kosong."}
+
 function adminPanel(){
   if($("adm"))return;
   const p=document.createElement("div");p.id="adm";
-  p.innerHTML=`<div style="max-width:820px;margin:auto"><div class="arow" style="border:0"><h2 style="margin:0">Kelola Pengawas</h2><button class="btn bg" id="ax">Tutup</button></div><div id="al"></div></div>`;
-  document.body.appendChild(p);
+  p.innerHTML=`<div style="max-width:820px;margin:auto"><div class="arow" style="border:0"><h2 style="margin:0">Kelola Pengawas</h2><button class="btn bg" id="ax">Tutup</button></div><div class="card"><h3>Tombol "Isi contoh yang kosong"</h3><p class="note" id="fls"></p><button class="btn" id="flb"></button></div><div id="al"></div></div>`;
+  document.body.appendChild(p);paintFl();$("flb").onclick=()=>setDoc(doc(db,"config","app"),{fillLocked:!window.__fillLocked}).catch(e=>alert(e.message));
   const bt=(id,op,l,c)=>`<button class="btn ${c||""}" data-id="${id}" data-op="${op}">${l}</button> `;
   const sec=(t,n,list,f)=>`<div class="card"><h3>${t} (${list.length})</h3>${list.length?list.map(x=>`<div class="arow"><div>${esc(x.name)}<br><span class="note">${esc(x.email)}</span></div><div>${f(x)}</div></div>`).join(""):`<p class="empty">${n}</p>`}</div>`;
   const un=onSnapshot(collection(db,"users"),s=>{
