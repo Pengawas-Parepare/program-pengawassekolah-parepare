@@ -394,13 +394,64 @@ function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.t
  PG("Demikian laporan ini disusun sebagai pertanggungjawaban pelaksanaan pendampingan satuan pendidikan. Atas perhatian dan dukungan semua pihak, kami mengucapkan terima kasih."),
  B("",{af:200}),sig([sgc([[""]]),sgc([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])])],
  lamp=[T1("LAMPIRAN",false),...Object.keys(PT).filter(k=>k!="_").flatMap(k=>PT[k]())],
+ PRG=X.prog,nop=L.nop||"……/……/"+th,
+ cv2=[CT("PROGRAM KERJA PENGAWAS SEKOLAH",{sz:32,bf:1200,af:60}),...cover.slice(1)],
+ wt=(f,BL)=>TBL(["No.","Satuan pendidikan",...BL],o.map((s,i)=>[i+1,s.n,...BL.map((_,m)=>f(s).slice(m*4,m*4+4).map((x,k)=>x?k+1:0).filter(Boolean).join(", ")||"-")]),[5,29,11,11,11,11,11,11]),
+ fr2=[CT("LEMBAR PENGESAHAN",{sz:26,af:240}),CT("PROGRAM KERJA PENGAWAS SEKOLAH",{af:20}),CT("TAHUN "+th,{af:200}),CT("Nomor: "+nop,{b:0,af:200}),
+  TBL(["Uraian","Keterangan"],[["Nama pengawas",g.nama||""],["NIP",g.nip||""],["Pangkat / Golongan",g.pangkat||""],["Jabatan",g.jab||""],["Wilayah/Instansi",(pl||"")+" – Dinas Pendidikan Kepemudaan dan Olahraga"],["Jumlah satuan pendidikan dampingan",String(n)]],[35,65]),
+  B("Program kerja ini telah diperiksa dan disahkan sebagai pedoman pelaksanaan tugas kepengawasan dan pendampingan satuan pendidikan pada tahun "+th+".",{bf:240,af:300}),
+  sig([...kdn]),...(kadisC.length?[B("",{af:120}),sig(kadisC)]:[]),
+  CT("KATA PENGANTAR",{sz:26,pb:1,af:240}),
+  ...["Puji syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya sehingga Program Kerja Pengawas Sekolah Tahun "+th+" ini dapat diselesaikan.",
+   "Program ini memuat landasan, hasil pemetaan kesadaran dan kapasitas perubahan, strategi serta skala prioritas pendampingan, rencana kegiatan Tahap I sampai Tahap IV, jadwal kunjungan, serta mekanisme monitoring, evaluasi, dan pelaporan terhadap "+n+" satuan pendidikan dampingan. Penyusunannya berpedoman pada data Rapor Pendidikan dan hasil diskusi dengan kepala sekolah.",
+   "Kami mengucapkan terima kasih kepada Kepala Dinas, Korwas, kepala sekolah, guru, dan semua pihak yang mendukung penyusunan program ini. Kritik dan saran yang membangun sangat kami harapkan. Semoga program ini bermanfaat bagi peningkatan mutu layanan pendidikan."].map(PG),
+  B("",{af:120}),sig([sgc([[""]]),sgc([[tgl],["Penyusun,"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])]),
+  CT("DAFTAR ISI",{sz:26,pb:1,af:240}),new d.TableOfContents("Daftar Isi",{hyperlink:true,headingStyleRange:"1-2"})],
+ bd2=[T1("BAB I PENDAHULUAN",false),T2("A. Latar Belakang"),
+  PG("Pendidikan yang bermutu merupakan hak setiap warga negara dan menjadi tanggung jawab bersama seluruh pemangku kepentingan. Peningkatan mutu perlu didukung perencanaan berbasis data, kepemimpinan perubahan yang kuat di satuan pendidikan, dan pendampingan berkelanjutan dari pengawas sekolah."),
+  PG("Rapor Pendidikan menyediakan potret kinerja satuan pendidikan untuk perencanaan berbasis data. Berdasarkan refleksi dan analisis data tersebut, satuan pendidikan menyusun RKT/RKJP, sedangkan pengawas sekolah mendampingi kepala sekolah dan tim manajemen sesuai tingkat kesadaran dan kapasitas perubahan yang dimiliki."),
+  PG("Satuan pendidikan dipetakan ke dalam spektrum perubahan (Penyemai Perubahan, Perubahan Segera, Penguatan Perubahan, Perubahan Berangsur, Pemicu Perubahan, dan Perubahan Berkelanjutan), lalu ditetapkan strategi, metode, frekuensi, dan skala prioritas pendampingan. Pada tahun "+th+", pendampingan direncanakan untuk "+n+" satuan pendidikan"+(pl?" di "+pl:"")+"."),
+  T2("B. Dasar Hukum"),...num(dasar),
+  T2("C. Tujuan"),...num(["Memetakan tingkat kesadaran dan kapasitas perubahan satuan pendidikan dampingan.","Menetapkan strategi, metode, dan skala prioritas pendampingan sesuai kebutuhan tiap satuan pendidikan.","Merencanakan pendampingan perencanaan dan pendampingan pelaksanaan program kerja satuan pendidikan pada Tahap I sampai Tahap IV.","Menyediakan dasar monitoring, evaluasi, pelaporan, dan tindak lanjut untuk peningkatan mutu layanan pendidikan."]),
+  T2("D. Sasaran dan Ruang Lingkup"),PG("Sasaran pendampingan adalah kepala sekolah dan tim manajemen pada "+n+" satuan pendidikan berikut."),
+  TBL(["No.","Nama satuan pendidikan","NPSN","Strategi","Prioritas"],D.sk.map((s,i)=>{const t=strat(s);return[i+1,s.n||"",s.id||"",t||"-",t?INFO[t].p:"-"]}),[6,44,14,22,14]),
+  PG("Ruang lingkup meliputi pendampingan perencanaan (analisis Rapor Pendidikan, perencanaan berbasis data, penyusunan RKT/RKJP, RKS-RKAS) dan pendampingan pelaksanaan program kerja (diskusi, dukungan, refleksi, dan umpan balik)."),
+  T2("E. Waktu Pelaksanaan"),PG("Program dilaksanakan sepanjang tahun "+th+" dalam empat tahap, yaitu Tahap I (Januari–Maret), Tahap II (April–Juni), Tahap III (Juli–September), dan Tahap IV (Oktober–Desember), pada hari kerja (Senin–Jumat)."),
+  T1("BAB II ANALISIS KONDISI DAN PEMETAAN"),T2("A. Hasil Pemetaan Kesadaran dan Kapasitas"),
+  PG("Dari "+n+" satuan pendidikan dampingan, "+kd+" berada pada tingkat kesadaran Berdaya dan "+kb+" pada tingkat Berkembang. Pada aspek kapasitas, terdapat "+ak[0]+" satuan pendidikan berkapasitas Rendah, "+ak[1]+" Sedang, dan "+ak[2]+" Tinggi. Rata-rata skor Rapor Pendidikan yang dianalisis adalah "+ra+" (skala 1–4)."),
+  TBL(["No.","Satuan pendidikan","Kesadaran","Kapasitas","Rata-rata skor Rapor","Indikator berskor 1","Strategi"],o.map((s,i)=>[i+1,s.n||"",kes(s)||"-",kap(s)||"-",avg(s)==null?"-":avg(s).toFixed(2).replace(".",","),IND.filter((x,k)=>ap(s)[k]==1).join(", ")||"-",s.st]),[4,20,14,10,11,22,19]),
+  PG("Indikator Rapor Pendidikan berskor 1 menjadi acuan utama diskusi akar masalah pada Tahap II."),
+  T2("B. Spektrum Perubahan dan Strategi Pendampingan"),
+  TBL(["Strategi","Prioritas","Metode","Pendekatan"],Object.keys(INFO).map(k=>[k,INFO[k].p,INFO[k].m,INFO[k].r]),[20,12,26,42]),
+  T2("C. Metode Pendampingan"),TBL(["Metode","Tujuan penerapan"],MTD.map(r=>[r[0],r[1]]),[22,78]),
+  T1("BAB III RENCANA PROGRAM"),T2("A. Program Pokok dan Target"),
+  TBL(["No.","Satuan pendidikan","Strategi","Metode","Peran pengawas","Target"],o.map((s,i)=>[i+1,s.n,s.st,INFO[s.st].m,INFO[s.st].r,INFO[s.st].t]),[5,17,14,15,22,27]),
+  T2("B. Rencana Kegiatan per Tahap"),
+  TBL(["Tahap","Periode","Fokus kegiatan","Rencana kunjungan (minggu)","Tanggal kegiatan"],tahap.map((t,i)=>[...t,wk(i),tg(i*3+1)]),[9,13,40,14,24]),
+  T2("C. Jadwal Perencanaan Tahap I"),
+  TBL(["Bulan","Tanggal","Kegiatan"],[["I",g.t1||"-","Komitmen perubahan kepala sekolah dampingan"],["II",g.t2||"-","Penentuan strategi, metode pendampingan, dan prioritas"],["III",g.t3||"-","Dokumen rencana pendampingan"]],[10,25,65]),
+  T2("D. Pendampingan Perencanaan Tahap II (April–Juni)"),PG("Tanggal kegiatan: "+tg(4)+"."),
+  TBL(["No.","Satuan pendidikan","Prioritas","April","Mei","Juni"],o.map((s,i)=>[i+1,s.n,INFO[s.st].p,kg(s,"apr"),kg(s,"mei"),kg(s,"jun")]),[5,29,12,18,18,18]),
+  PG("Hasil diskusi tiap bulan dicatat dalam empat butir: akar masalah, potensi satuan pendidikan, harapan, dan ide program. Tautan dokumen Perencanaan Berbasis Data (PBD) dan RKT/RKJP dicatat per satuan pendidikan."),
+  T2("E. Pendampingan Pelaksanaan Tahap III dan IV (Juli–Desember)"),PG("Kegiatan berupa diskusi, umpan balik, dan dukungan; frekuensi mengikuti prioritas (Ya = ada kegiatan pada bulan tersebut)."),
+  TBL(["No.","Satuan pendidikan","Jul","Agu","Sep","Okt","Nov","Des"],o.map((s,i)=>[i+1,s.n,...ALLM.map(m=>act(s,m)?"Ya":"-")]),[5,29,11,11,11,11,11,11]),
+  T2("F. Jadwal Kunjungan Mingguan"),PG("Angka menunjukkan minggu ke-berapa pada bulan tersebut. Semester I direncanakan "+(wk(0)+wk(1))+" kunjungan dan semester II "+(wk(2)+wk(3))+" kunjungan."),
+  wt(JD,BLN),B("",{af:120}),wt(JD2,BL2),
+  T1("BAB IV MONITORING, EVALUASI, DAN PELAPORAN"),T2("A. Instrumen"),
+  ...num(["Lampiran 1–2: Komitmen dan tingkat kesadaran perubahan kepala sekolah.","Lampiran 3–4: Kapasitas dan tingkat kapasitas perubahan.","Tabel 3A: Rapor Pendidikan satuan pendidikan.","Lampiran 5–7: Matriks, strategi, metode, dan skala prioritas pendampingan.","Lembar hasil diskusi, catatan diskusi, pemberian dukungan, serta refleksi dan umpan balik."]),
+  T2("B. Indikator Keberhasilan"),...num(["Seluruh satuan pendidikan dampingan terpetakan dan memiliki strategi serta skala prioritas pada akhir Tahap I.","Seluruh satuan pendidikan memiliki dokumen PBD dan RKT/RKJP (RKS-RKAS) berbasis Rapor Pendidikan pada akhir Tahap II.","Kunjungan terlaksana sesuai jadwal dan terdokumentasi lengkap (realisasi terhadap "+(wk(0)+wk(1)+wk(2)+wk(3))+" kunjungan yang direncanakan).","Tiap satuan pendidikan menunjukkan aksi nyata perubahan pada pembelajaran sesuai target strategi masing-masing.","Tersusun refleksi, umpan balik, dan rumusan tindak lanjut pada akhir Tahap IV."]),
+  T2("C. Monitoring dan Evaluasi"),PG("Monitoring dilakukan setiap kunjungan melalui diskusi, observasi, dan studi dokumen. Evaluasi dilakukan pada akhir tiap tahap untuk membandingkan rencana dan realisasi, menilai ketercapaian target strategi, dan menyesuaikan strategi atau prioritas bila kondisi satuan pendidikan berubah."),
+  T2("D. Pelaporan"),PG("Pelaporan dilaksanakan berkala tiap tahap dan ditutup dengan Laporan Pendampingan Satuan Pendidikan akhir tahun yang disusun dari data aplikasi ini."),
+  T2("E. Dukungan dan Pembiayaan"),PG("Pelaksanaan program didukung anggaran dinas pendidikan dan sumber lain yang sah sesuai ketentuan. Rincian biaya diisi sesuai DPA yang berlaku."),
+  T1("BAB V PENUTUP"),PG("Program kerja ini menjadi pedoman pelaksanaan pendampingan satuan pendidikan sepanjang tahun "+th+" dan dapat disesuaikan bila hasil monitoring menunjukkan perubahan kondisi satuan pendidikan. Demikian program kerja ini disusun; atas dukungan semua pihak kami mengucapkan terima kasih."),
+  B("",{af:200}),sig([sgc([[""]]),sgc([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])])],
  ft=new d.Footer({children:[new d.Paragraph({alignment:AL.CENTER,children:[new d.TextRun({children:[d.PageNumber.CURRENT],font:FT,size:20})]})]}),
  mg={top:1701,bottom:1701,left:2268,right:1701},
  hs=(id,nme,sz,bf)=>({id,name:nme,basedOn:"Normal",next:"Normal",quickFormat:true,run:{font:FT,size:sz,bold:true,color:"000000"},paragraph:{spacing:{before:bf,after:120}}});
  return new d.Document({features:{updateFields:true},styles:{default:{document:{run:{font:FT,size:Z}}},paragraphStyles:[hs("Heading1","Heading 1",26,240),hs("Heading2","Heading 2",24,200)]},
-  sections:[{properties:{page:{margin:mg}},children:cover},
-   {properties:{page:{margin:mg,pageNumbers:{start:1,formatType:d.NumberFormat.LOWER_ROMAN}}},footers:{default:ft},children:front},
-   {properties:{page:{margin:mg,pageNumbers:{start:1,formatType:d.NumberFormat.DECIMAL}}},footers:{default:ft},children:body},
+  sections:[{properties:{page:{margin:mg}},children:PRG?cv2:cover},
+   {properties:{page:{margin:mg,pageNumbers:{start:1,formatType:d.NumberFormat.LOWER_ROMAN}}},footers:{default:ft},children:PRG?fr2:front},
+   {properties:{page:{margin:mg,pageNumbers:{start:1,formatType:d.NumberFormat.DECIMAL}}},footers:{default:ft},children:PRG?bd2:body},
    {properties:{page:{size:{orientation:d.PageOrientation.LANDSCAPE},margin:{top:900,bottom:900,left:900,right:900},pageNumbers:{formatType:d.NumberFormat.DECIMAL}}},footers:{default:ft},children:lamp}]})}
 T["Laporan Resmi"]=()=>{D.lap=D.lap||{};const L=D.lap,g=D.g,ms=[["Nama pengawas",g.nama],["NIP",g.nip],["Pangkat",g.pangkat],["Jabatan",g.jab],["Tempat/kabupaten",g.tempat],["Tahun",g.thn],["Nama Korwas",g.korwas],["NIP Korwas",g.nipk],...(!g.nk?[["Nama Kepala Dinas",g.kadis],["NIP Kepala Dinas",g.nipkd]]:[])].filter(x=>!String(x[1]||"").trim()).map(x=>x[0]);
  return `<div class="card"><h2>Laporan resmi pendampingan</h2><p class="note">Menyusun laporan lengkap berformat resmi dari data aplikasi: sampul, lembar pengesahan, kata pengantar, daftar isi, Bab I–V, dan lampiran (tabel dari semua tab). Kolom yang dikosongkan diisi draf otomatis dari data Anda.</p>
@@ -411,6 +462,13 @@ ${ms.length?`<p class="kwn">Lengkapi dulu di tab Mulai: ${ms.join(", ")}.</p>`:'
 <label>Saran dan tindak lanjut (satu butir per baris; kosong = draf otomatis)<textarea data-f="lap.sar" rows="5">${E(L.sar||"")}</textarea></label>
 <p class="np"><button class="btn" data-a="dl" data-k="lap">Unduh Laporan Lengkap (Word)</button></p>
 <p class="note">Setelah dibuka di Word, klik kanan pada Daftar Isi lalu pilih Perbarui Bidang (atau tekan F9) agar nomor halaman terisi. Periksa kembali dasar hukum dan isi laporan sebelum disahkan.</p></div>`};
+T["Program Kerja"]=()=>{D.lap=D.lap||{};const L=D.lap,g=D.g,o=order(),ms=[["Nama pengawas",g.nama],["NIP",g.nip],["Pangkat",g.pangkat],["Jabatan",g.jab],["Tempat/kabupaten",g.tempat],["Tahun",g.thn],["Nama Korwas",g.korwas],["NIP Korwas",g.nipk],...(!g.nk?[["Nama Kepala Dinas",g.kadis],["NIP Kepala Dinas",g.nipkd]]:[])].filter(x=>!String(x[1]||"").trim()).map(x=>x[0]);
+ return `<div class="card"><h2>Program kerja pengawas ${E(g.thn)}</h2><p class="note">Menyusun dokumen program kerja lengkap dari data aplikasi: sampul, lembar pengesahan, kata pengantar, daftar isi, Bab I–V, dan lampiran. Sekolah, strategi, prioritas, jadwal, dan tanggal otomatis mengikuti tab lain; dasar hukum mengikuti isian di tab Laporan Resmi.</p>
+${ms.length?`<p class="kwn">Lengkapi dulu di tab Mulai: ${ms.join(", ")}.</p>`:'<p class="note">Identitas sudah lengkap.</p>'}
+<div class="g2">${fld("Nomor program (opsional)","lap.nop",L.nop)}${fld("Tempat, tanggal pengesahan (kosong = otomatis)","lap.tgl",L.tgl)}</div>
+<div class="scroll"><table><thead><tr><th>No.</th><th>Satuan pendidikan</th><th>Strategi</th><th>Prioritas</th></tr></thead><tbody>${o.map((s,i)=>`<tr><td>${i+1}</td><td><b>${E(s.n)}</b></td><td>${tag(s.st)}</td><td>${INFO[s.st].p}</td></tr>`).join("")||'<tr><td colspan="4">Belum ada data. Isi Lampiran 1 dan 3 lebih dulu.</td></tr>'}</tbody></table></div>
+<p class="np"><button class="btn" data-a="dl" data-k="prog">Unduh Program Kerja Lengkap (Word)</button></p>
+<p class="note">Setelah dibuka di Word, klik kanan Daftar Isi lalu pilih Perbarui Bidang (F9). Periksa dasar hukum dan lengkapi rincian anggaran sebelum disahkan.</p></div>`};
 /* ===== Contoh & Sinkron ===== */
 const emp=v=>!String(v==null?"":v).trim(),any=a=>(a||[]).some(Boolean),st=s=>s.st=strat(s);
 const slug=n=>String(n||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"sekolah";
@@ -622,14 +680,14 @@ function buildDoc(key){const d=window.docx,AL=d.AlignmentType,ks=D.sk,o=order(),
   twjd:()=>[H("Jadwal Kegiatan Pendampingan Pelaksanaan Program Kerja Satuan Pendidikan Tahun "+th+" (Juli-Desember)"),
    TB(["No.","Prioritas","Nama sekolah",...BL2.flatMap(b=>[1,2,3,4].map(w=>b+" "+w)),"Jml"],o.map((s,j)=>{const a=JD2(s);return [j+1,INFO[s.st].p,s.n,...a.map(x=>x?"v":""),a.filter(Boolean).length]}),{sz:12,ce:3})],
   _:()=>[]};
- if(key==="lap")return LAP({d,AL,TB,sgc,PT,o,g,th,NB});
+ if(key==="lap"||key==="prog")return LAP({d,AL,TB,sgc,PT,o,g,th,NB,prog:key==="prog"});
  const keys=all?Object.keys(PT):[key];
  const head=all?[P("PERENCANAAN PENDAMPINGAN SATUAN PENDIDIKAN",{b:1,sz:28,al:AL.CENTER,af:40}),P("Komitmen Perubahan, Strategi dan Metode Pendampingan, Skala Prioritas, Dokumen Perencanaan",{al:AL.CENTER,af:40}),P("Tahun "+th,{b:1,al:AL.CENTER,af:200}),...id.map(r=>P(r[0]+" : "+(r[1]||""),{af:20}))]
   :[P("PERENCANAAN PENDAMPINGAN SATUAN PENDIDIKAN "+th,{b:1,sz:20,af:160})];
  const ch=[...head,...keys.flatMap(k=>PT[k]()),P("",{af:200}),
   new d.Table({width:{size:100,type:d.WidthType.PERCENTAGE},borders:{...nb,insideHorizontal:NB,insideVertical:NB},rows:[new d.TableRow({cantSplit:true,children:[...(!g.nk?[sgc([["Mengetahui,"],["Kepala Dinas Pendidikan Kepemudaan dan Olahraga"],[""],[""],[""],[g.kadis||"",1],...(g.pkd?[[g.pkd]]:[]),["NIP. "+(g.nipkd||"")]])]:[]),sgc([["Mengetahui,"],["Korwas/Korwaswil"],[""],[""],[""],[g.korwas||"",1],["NIP. "+(g.nipk||"")]]),sgc([[(g.tempat||"")+" "+sd],["Penyusun, Pengawas Pendamping"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])]})]})];
  return new d.Document({sections:[{properties:{page:{size:{orientation:d.PageOrientation.LANDSCAPE},margin:{top:900,bottom:900,left:900,right:900}}},children:ch}]})}
-const FN={lap:"Laporan-Pendampingan",tw4p:"TW4-Pelaksanaan",tw4cd:"TW4-Catatan-Diskusi",tw4dk:"TW4-Dukungan",tw4ub:"TW4-Umpan-Balik",tw1:"TW3-Pelaksanaan",twcd:"TW3-Catatan-Diskusi",twdk:"TW3-Dukungan",twub:"TW3-Umpan-Balik",twjd:"TW3-Jadwal",ppapr:"Hasil-Diskusi-April",ppmei:"Hasil-Diskusi-Mei",ppjun:"Hasil-Diskusi-Juni",pp1:"Pendampingan-Perencanaan",ppjd:"Jadwal-Pendampingan-Perencanaan",all:"Perencanaan-Pendampingan",l1:"Lampiran-1-Kesadaran",l2:"Lampiran-2-Tingkat-Kesadaran",l3:"Lampiran-3-Kapasitas",l4:"Lampiran-4-Tingkat-Kapasitas",t3a:"Tabel-3A-Rapor-Pendidikan",l5:"Lampiran-5-Matriks",l67:"Lampiran-6-7-Strategi-Prioritas",rencana:"Rencana-Pendampingan",jadwal:"Jadwal-Kegiatan"};
+const FN={lap:"Laporan-Pendampingan",prog:"Program-Kerja-Pengawas",tw4p:"TW4-Pelaksanaan",tw4cd:"TW4-Catatan-Diskusi",tw4dk:"TW4-Dukungan",tw4ub:"TW4-Umpan-Balik",tw1:"TW3-Pelaksanaan",twcd:"TW3-Catatan-Diskusi",twdk:"TW3-Dukungan",twub:"TW3-Umpan-Balik",twjd:"TW3-Jadwal",ppapr:"Hasil-Diskusi-April",ppmei:"Hasil-Diskusi-Mei",ppjun:"Hasil-Diskusi-Juni",pp1:"Pendampingan-Perencanaan",ppjd:"Jadwal-Pendampingan-Perencanaan",all:"Perencanaan-Pendampingan",l1:"Lampiran-1-Kesadaran",l2:"Lampiran-2-Tingkat-Kesadaran",l3:"Lampiran-3-Kapasitas",l4:"Lampiran-4-Tingkat-Kapasitas",t3a:"Tabel-3A-Rapor-Pendidikan",l5:"Lampiran-5-Matriks",l67:"Lampiran-6-7-Strategi-Prioritas",rencana:"Rencana-Pendampingan",jadwal:"Jadwal-Kegiatan"};
 async function exportDocx(k){k=k||"all";try{
  let dl=null;if(window.claude&&claude.use){try{dl=await claude.use("downloads")}catch(e){}}
  await loadS("https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js");const blob=await window.docx.Packer.toBlob(buildDoc(k));
