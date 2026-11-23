@@ -466,6 +466,7 @@ ${ms.length?`<p class="kwn">Lengkapi dulu di tab Mulai: ${ms.join(", ")}.</p>`:'
 <label>Kesimpulan (satu butir per baris; kosong = draf otomatis dari data)<textarea data-f="lap.kes" rows="5">${E(L.kes||"")}</textarea></label>
 <label>Saran dan tindak lanjut (satu butir per baris; kosong = draf otomatis)<textarea data-f="lap.sar" rows="5">${E(L.sar||"")}</textarea></label>
 ${TKUI()}
+<div class="rs np"><b>Kolom kosong di laporan:</b> ${lapEmpty()?lapEmpty()+" kolom belum terisi (dasar hukum, kesimpulan, saran, dan transformasi komitmen per sekolah)."+"":"semua kolom sudah terisi."}<br>${fxb("lap","Isi contoh kolom yang kosong")} <span class="note">Hanya kolom kosong yang diisi; isian Anda tidak ditimpa. Setelah terisi, teks bisa diedit langsung di kolomnya.</span></div>
 <p class="np"><button class="btn bg" data-a="pv" data-k="lap">Pratinjau</button> <button class="btn" data-a="dl" data-k="lap">Unduh Laporan Lengkap (Word)</button></p>
 <p class="note">Setelah dibuka di Word, klik kanan pada Daftar Isi lalu pilih Perbarui Bidang (atau tekan F9) agar nomor halaman terisi. Periksa kembali dasar hukum dan isi laporan sebelum disahkan.</p></div>`};
 T["Program Kerja"]=()=>{D.lap=D.lap||{};const L=D.lap,g=D.g,o=order(),ms=[["Nama pengawas",g.nama],["NIP",g.nip],["Pangkat",g.pangkat],["Jabatan",g.jab],["Tempat/kabupaten",g.tempat],["Tahun",g.thn],["Nama Korwas",g.korwas],["NIP Korwas",g.nipk],...(!g.nk?[["Nama Kepala Dinas",g.kadis],["NIP Kepala Dinas",g.nipkd]]:[])].filter(x=>!String(x[1]||"").trim()).map(x=>x[0]);
@@ -535,9 +536,30 @@ pb:(s,i)=>{if(!st(s))return;MK.forEach(m=>{if(kg(s,m)=="-")return;const r=PB(s,m
 lk:s=>{if(emp(s.lpbd))s.lpbd="https://drive.contoh.id/pbd-"+slug(s.n);if(emp(s.lrkt))s.lrkt="https://drive.contoh.id/rkt-"+slug(s.n)},
 tw:twfx(TWM),tw4:twfx(TWQ[4].M),
 jd:(s,i,z)=>syncJ(s,i,"jd",z),jd2:(s,i,z)=>syncJ(s,i,"jd2",z)};
-const FXK=["sk","kp","mp","rp","pb","lk","tw","tw4","jd","jd2"];
+const lapEx=()=>{const o=order(),g=D.g,th=g.thn||"",n=D.sk.length,cnt=k=>o.filter(s=>INFO[s.st].p==k).length,
+ kd=o.filter(s=>kes(s)=="Berdaya").length,kb=o.filter(s=>kes(s)=="Berkembang").length,ak=["Rendah","Sedang","Tinggi"].map(k=>o.filter(s=>kap(s)==k).length),
+ av=o.map(avg).filter(x=>x!=null),ra=av.length?(av.reduce((a,b)=>a+b,0)/av.length).toFixed(2).replace(".",","):"-",
+ wk=t=>D.sk.reduce((a,s)=>a+(t<2?JD(s):JD2(s)).slice((t%2)*12,(t%2)*12+12).filter(Boolean).length,0),
+ kv=D.sk.reduce((a,s)=>a+(Array.isArray(s.kv)?s.kv.length:0),0);
+ return{dasar:DASAR.join("\n"),
+ kes:[`Hasil pemetaan terhadap ${n} satuan pendidikan dampingan menunjukkan ${kd} satuan pendidikan berada pada tingkat kesadaran Berdaya dan ${kb} satuan pendidikan pada tingkat Berkembang, dengan tingkat kapasitas Rendah ${ak[0]}, Sedang ${ak[1]}, dan Tinggi ${ak[2]} satuan pendidikan; rata-rata skor Rapor Pendidikan yang dianalisis adalah ${ra} (skala 1–3).`,
+ `Satuan pendidikan dikelompokkan ke dalam ${cnt("Utama")} prioritas utama, ${cnt("Menengah")} prioritas menengah, dan ${cnt("Akhir")} prioritas akhir, sehingga strategi, metode, dan frekuensi pendampingan dapat disesuaikan dengan kebutuhan masing-masing satuan pendidikan.`,
+ `Pendampingan dilaksanakan melalui empat tahap sepanjang tahun ${th} dengan total rencana ${wk(0)+wk(1)+wk(2)+wk(3)} kali kunjungan mingguan${kv?`, di antaranya ${kv} kunjungan telah tercatat dengan tanggal pasti`:""}, serta dokumentasi hasil diskusi, dukungan, dan umpan balik pada tiap tahap.`,
+ "Penerapan metode pendampingan yang berbeda menurut spektrum perubahan (direktif, kombinatif, dan non-direktif) mendukung kepala sekolah dan tim manajemen untuk semakin mandiri dalam merencanakan dan melaksanakan perbaikan mutu."].join("\n"),
+ sar:["Kepala sekolah dan tim manajemen agar menindaklanjuti hasil diskusi dan rencana perbaikan dalam RKT/RKJP serta melaksanakannya secara konsisten dan terdokumentasi.",
+ "Pengawas sekolah agar melanjutkan pendampingan dengan menyesuaikan strategi, metode, dan frekuensi berdasarkan Rapor Pendidikan terbaru dan perkembangan tiap satuan pendidikan.",
+ "Dinas pendidikan diharapkan memfasilitasi pengembangan kapasitas kepala sekolah dan komunitas belajar, terutama bagi satuan pendidikan pada prioritas utama.",
+ "Praktik baik dari satuan pendidikan pada tahap perubahan berkelanjutan agar dibagikan dan direplikasi ke satuan pendidikan lain."].join("\n")}};
+const lapEmpty=()=>{const L=D.lap||{},a=["dasar","kes","sar"].filter(k=>emp(L[k])).length;let b=0;(D.sk||[]).forEach(s=>{if(!strat(s))return;["tsb","tss","tce","trk"].forEach(f=>{if(emp(s[f]))b++})});return a+b};
+const fillLap=()=>{D.lap=D.lap||{};const L=D.lap,x=lapEx();if(emp(L.dasar))L.dasar=x.dasar;if(D.sk.length&&order().length){if(emp(L.kes))L.kes=x.kes;if(emp(L.sar))L.sar=x.sar}};
+FX.tk=s=>{if(!strat(s))return;const n=s.n||"satuan pendidikan",p=INFO[s.st].p.toLowerCase();
+ if(emp(s.tsb))s.tsb=TKA(s).replace(/;\s*/g,"\n");
+ if(emp(s.tss))s.tss=`Kepala sekolah di ${n} mulai konsisten melakukan refleksi dan menindaklanjuti hasil diskusi pendampingan\nProgram perbaikan dalam RKT/RKJP telah dilaksanakan dan didokumentasikan oleh tim manajemen`;
+ if(emp(s.tce))s.tce=`Pendampingan pada ${n} (prioritas ${p}) berjalan sesuai rencana; perubahan perlu terus dipantau agar menjadi kebiasaan yang berkelanjutan.`;
+ if(emp(s.trk))s.trk=`Memfasilitasi pelatihan penguatan kapasitas kepala sekolah ${n}\nMendukung pembentukan komunitas belajar dan berbagi praktik baik antar satuan pendidikan`};
+const FXK=["sk","kp","mp","rp","pb","lk","tw","tw4","jd","jd2","tk"];
 const fillId=()=>Object.keys(EX.g).forEach(k=>{if(emp(D.g[k]))D.g[k]=EX.g[k]});
-function fx(k,z,j){if(window.__fillLocked&&!window.__isAdmin){alert("Fitur isi contoh yang kosong sedang dikunci admin. Hubungi admin untuk membukanya.");return}if(k=="all"||k=="id")fillId();const ks=k=="all"?FXK:k=="id"?[]:[k];D.sk.forEach((s,i)=>{if(j!=null&&i!=j)return;ks.forEach(x=>FX[x](s,i,z))})}
+function fx(k,z,j){if(window.__fillLocked&&!window.__isAdmin){alert("Fitur isi contoh yang kosong sedang dikunci admin. Hubungi admin untuk membukanya.");return}if(k=="all"||k=="id")fillId();if(k=="all"||k=="lap")fillLap();const ks=k=="all"?FXK:k=="id"||k=="lap"?(k=="lap"?["tk"]:[]):[k];D.sk.forEach((s,i)=>{if(j!=null&&i!=j)return;ks.forEach(x=>FX[x](s,i,z))})}
 const fxb=(k,l)=>`<button class="btn bg np" data-a="fx" data-k="${k}">${l||"Isi contoh yang kosong"}</button>`;
 const rh=s=>{const a=ap(s),l=IND.filter((x,k)=>a[k]==1);return a.some(x=>x!=null)?"Indikator Rapor Pendidikan berskor 1 (acuan akar masalah): "+(l.join(", ")||"tidak ada"):"Skor Rapor Pendidikan belum diisi (lihat menu Rapor Pendidikan)."};
 const jinfo=(k,o)=>{const n=o.reduce((a,s)=>a+badJ(s,k),0);return `<div class="rs np"><b>Sinkronisasi dengan prioritas:</b> ${n?`${n} bulan belum sesuai. Sel abu-abu = bulan tanpa kegiatan; bulan kegiatan perlu minimal satu minggu.`:"semua baris sudah sesuai."}<br><button class="btn bg" data-a="sj" data-k="${k}">Sinkronkan otomatis</button> ${fxb(k,"Isi contoh minggu yang kosong")}</div>`};
