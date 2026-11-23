@@ -460,14 +460,14 @@ ${ms.length?`<p class="kwn">Lengkapi dulu di tab Mulai: ${ms.join(", ")}.</p>`:'
 <label>Dasar hukum (satu butir per baris; kosong = daftar standar yang perlu Anda periksa)<textarea data-f="lap.dasar" rows="6" placeholder="Undang-Undang Nomor 20 Tahun 2003 tentang Sistem Pendidikan Nasional;">${E(L.dasar||"")}</textarea></label>
 <label>Kesimpulan (satu butir per baris; kosong = draf otomatis dari data)<textarea data-f="lap.kes" rows="5">${E(L.kes||"")}</textarea></label>
 <label>Saran dan tindak lanjut (satu butir per baris; kosong = draf otomatis)<textarea data-f="lap.sar" rows="5">${E(L.sar||"")}</textarea></label>
-<p class="np"><button class="btn" data-a="dl" data-k="lap">Unduh Laporan Lengkap (Word)</button></p>
+<p class="np"><button class="btn bg" data-a="pv" data-k="lap">Pratinjau</button> <button class="btn" data-a="dl" data-k="lap">Unduh Laporan Lengkap (Word)</button></p>
 <p class="note">Setelah dibuka di Word, klik kanan pada Daftar Isi lalu pilih Perbarui Bidang (atau tekan F9) agar nomor halaman terisi. Periksa kembali dasar hukum dan isi laporan sebelum disahkan.</p></div>`};
 T["Program Kerja"]=()=>{D.lap=D.lap||{};const L=D.lap,g=D.g,o=order(),ms=[["Nama pengawas",g.nama],["NIP",g.nip],["Pangkat",g.pangkat],["Jabatan",g.jab],["Tempat/kabupaten",g.tempat],["Tahun",g.thn],["Nama Korwas",g.korwas],["NIP Korwas",g.nipk],...(!g.nk?[["Nama Kepala Dinas",g.kadis],["NIP Kepala Dinas",g.nipkd]]:[])].filter(x=>!String(x[1]||"").trim()).map(x=>x[0]);
  return `<div class="card"><h2>Program kerja pengawas ${E(g.thn)}</h2><p class="note">Menyusun dokumen program kerja lengkap dari data aplikasi: sampul, lembar pengesahan, kata pengantar, daftar isi, Bab I–V, dan lampiran. Sekolah, strategi, prioritas, jadwal, dan tanggal otomatis mengikuti tab lain; dasar hukum mengikuti isian di tab Laporan Resmi.</p>
 ${ms.length?`<p class="kwn">Lengkapi dulu di tab Mulai: ${ms.join(", ")}.</p>`:'<p class="note">Identitas sudah lengkap.</p>'}
 <div class="g2">${fld("Nomor program (opsional)","lap.nop",L.nop)}${fld("Tempat, tanggal pengesahan (kosong = otomatis)","lap.tgl",L.tgl)}</div>
 <div class="scroll"><table><thead><tr><th>No.</th><th>Satuan pendidikan</th><th>Strategi</th><th>Prioritas</th></tr></thead><tbody>${o.map((s,i)=>`<tr><td>${i+1}</td><td><b>${E(s.n)}</b></td><td>${tag(s.st)}</td><td>${INFO[s.st].p}</td></tr>`).join("")||'<tr><td colspan="4">Belum ada data. Isi Lampiran 1 dan 3 lebih dulu.</td></tr>'}</tbody></table></div>
-<p class="np"><button class="btn" data-a="dl" data-k="prog">Unduh Program Kerja Lengkap (Word)</button></p>
+<p class="np"><button class="btn bg" data-a="pv" data-k="prog">Pratinjau</button> <button class="btn" data-a="dl" data-k="prog">Unduh Program Kerja Lengkap (Word)</button></p>
 <p class="note">Setelah dibuka di Word, klik kanan Daftar Isi lalu pilih Perbarui Bidang (F9). Periksa dasar hukum dan lengkapi rincian anggaran sebelum disahkan.</p></div>`};
 /* ===== Contoh & Sinkron ===== */
 const emp=v=>!String(v==null?"":v).trim(),any=a=>(a||[]).some(Boolean),st=s=>s.st=strat(s);
@@ -591,6 +591,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-t],[data-a
  if(d.a=="sj"){if(!confirm("Sinkronkan jadwal dengan prioritas? Centang di bulan tanpa kegiatan dihapus, dan bulan kegiatan yang kosong diisi otomatis."))return;if(d.k=="all"){fx("jd",1);fx("jd2",1)}else fx(d.k,1)}
  if(d.a=="docx")return exportDocx("all");
  if(d.a=="dl")return exportDocx(d.k);
+ if(d.a=="pv")return previewDocx(d.k);
  if(d.a=="print")return print();
  save();keepGo()});
 let msg="",UP=0;
@@ -688,6 +689,19 @@ function buildDoc(key){const d=window.docx,AL=d.AlignmentType,ks=D.sk,o=order(),
   new d.Table({width:{size:100,type:d.WidthType.PERCENTAGE},borders:{...nb,insideHorizontal:NB,insideVertical:NB},rows:[new d.TableRow({cantSplit:true,children:[...(!g.nk?[sgc([["Mengetahui,"],["Kepala Dinas Pendidikan Kepemudaan dan Olahraga"],[""],[""],[""],[g.kadis||"",1],...(g.pkd?[[g.pkd]]:[]),["NIP. "+(g.nipkd||"")]])]:[]),sgc([["Mengetahui,"],["Korwas/Korwaswil"],[""],[""],[""],[g.korwas||"",1],["NIP. "+(g.nipk||"")]]),sgc([[(g.tempat||"")+" "+sd],["Penyusun, Pengawas Pendamping"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])]})]})];
  return new d.Document({sections:[{properties:{page:{size:{orientation:d.PageOrientation.LANDSCAPE},margin:{top:900,bottom:900,left:900,right:900}}},children:ch}]})}
 const FN={lap:"Laporan-Pendampingan",prog:"Program-Kerja-Pengawas",tw4p:"TW4-Pelaksanaan",tw4cd:"TW4-Catatan-Diskusi",tw4dk:"TW4-Dukungan",tw4ub:"TW4-Umpan-Balik",tw1:"TW3-Pelaksanaan",twcd:"TW3-Catatan-Diskusi",twdk:"TW3-Dukungan",twub:"TW3-Umpan-Balik",twjd:"TW3-Jadwal",ppapr:"Hasil-Diskusi-April",ppmei:"Hasil-Diskusi-Mei",ppjun:"Hasil-Diskusi-Juni",pp1:"Pendampingan-Perencanaan",ppjd:"Jadwal-Pendampingan-Perencanaan",all:"Perencanaan-Pendampingan",l1:"Lampiran-1-Kesadaran",l2:"Lampiran-2-Tingkat-Kesadaran",l3:"Lampiran-3-Kapasitas",l4:"Lampiran-4-Tingkat-Kapasitas",t3a:"Tabel-3A-Rapor-Pendidikan",l5:"Lampiran-5-Matriks",l67:"Lampiran-6-7-Strategi-Prioritas",rencana:"Rencana-Pendampingan",jadwal:"Jadwal-Kegiatan"};
+async function previewDocx(k){k=k||"all";
+ const old=document.getElementById("pvov");if(old)old.remove();
+ const ov=document.createElement("div");ov.id="pvov";
+ ov.style.cssText="position:fixed;inset:0;z-index:50;background:#6b7782;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)";
+ ov.innerHTML='<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--ac);color:var(--hf)"><b style="flex:1">Pratinjau dokumen</b><button class="hb" id="pvdl">Unduh Word</button><button class="hb" id="pvx">Tutup</button></div><div id="pvb" style="flex:1;overflow:auto;padding:8px"><p style="color:#fff;padding:12px">Menyiapkan pratinjau…</p></div>';
+ document.body.appendChild(ov);
+ ov.querySelector("#pvx").onclick=()=>ov.remove();ov.querySelector("#pvdl").onclick=()=>exportDocx(k);
+ const bd=ov.querySelector("#pvb");
+ try{await loadS("https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js");const blob=await window.docx.Packer.toBlob(buildDoc(k));
+  if(!window.__dpv){await loadS("https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js");const keep=window.docx;await loadS("https://cdn.jsdelivr.net/npm/docx-preview@0.3.3/dist/docx-preview.min.js");window.__dpv=window.docx;window.docx=keep}
+  bd.innerHTML="";const note=document.createElement("p");note.style.cssText="color:#fff;font-size:13px;margin:4px 8px 10px";note.textContent="Pratinjau ini mendekati tampilan Word. Daftar Isi dan nomor halaman baru terisi setelah dibuka di Word (Perbarui Bidang / F9).";bd.appendChild(note);
+  const c=document.createElement("div");bd.appendChild(c);await window.__dpv.renderAsync(blob,c,null,{className:"docx",inWrapper:true,breakPages:true,ignoreLastRenderedPageBreak:false})}
+ catch(e){bd.innerHTML='<p style="color:#fff;padding:12px">Gagal membuat pratinjau: '+E((e&&e.message)||e)+'</p>'}}
 async function exportDocx(k){k=k||"all";try{
  let dl=null;if(window.claude&&claude.use){try{dl=await claude.use("downloads")}catch(e){}}
  await loadS("https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js");const blob=await window.docx.Packer.toBlob(buildDoc(k));
