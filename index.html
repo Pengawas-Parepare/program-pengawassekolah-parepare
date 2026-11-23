@@ -312,7 +312,7 @@ return `${SP}<div class="card"><h2>Ragam strategi pendampingan</h2><p class="not
 const DASAR=["Undang-Undang Nomor 20 Tahun 2003 tentang Sistem Pendidikan Nasional;","Undang-Undang Nomor 14 Tahun 2005 tentang Guru dan Dosen;","Peraturan Pemerintah Nomor 57 Tahun 2021 tentang Standar Nasional Pendidikan sebagaimana telah diubah dengan Peraturan Pemerintah Nomor 4 Tahun 2022;","Peraturan Menteri Pendidikan Nasional Nomor 12 Tahun 2007 tentang Standar Pengawas Sekolah/Madrasah;","Peraturan Menteri Pendidikan, Kebudayaan, Riset, dan Teknologi Nomor 17 Tahun 2021 tentang Asesmen Nasional;","Ketentuan tentang Rapor Pendidikan dan jabatan fungsional pengawas sekolah yang berlaku;","Surat Tugas Kepala Dinas Pendidikan tentang penugasan pengawas sekolah Tahun Pelajaran/Tahun Anggaran berjalan."];
 function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.tempat||"",FT="Times New Roman",Z=24,
  B=(t,x={})=>new d.Paragraph({alignment:x.al??AL.JUSTIFIED,spacing:{line:x.ln||360,before:x.bf||0,after:x.af??100},indent:x.ind,keepNext:x.kn,pageBreakBefore:x.pb,children:[new d.TextRun({text:String(t??""),bold:!!x.b,size:x.sz||Z,font:FT})]}),
- PG=t=>B(t,{ind:{firstLine:720}}),LI=(a,t)=>B(a+" "+t,{ind:{left:720,hanging:420},af:60}),CT=(t,x={})=>B(t,{al:AL.CENTER,b:1,ln:276,...x}),
+ PG=t=>B(t,{ind:{firstLine:720}}),sgrc=(L,w)=>{const nbo={style:d.BorderStyle.NONE,size:0,color:"FFFFFF"};return new d.TableCell({width:{size:w,type:d.WidthType.PERCENTAGE},borders:{top:nbo,bottom:nbo,left:nbo,right:nbo},children:L.map(l=>B(l[0],{b:l[1],af:0,ln:276,al:AL.CENTER}))})},SGR=L=>sig([sgrc([[""]],45),sgrc(L,55)]),LI=(a,t)=>B(a+" "+t,{ind:{left:720,hanging:420},af:60}),CT=(t,x={})=>B(t,{al:AL.CENTER,b:1,ln:276,...x}),
  T1=(t,pb=true)=>new d.Paragraph({heading:d.HeadingLevel.HEADING_1,pageBreakBefore:pb,alignment:AL.CENTER,spacing:{after:240},children:[new d.TextRun({text:t,bold:1,size:26,font:FT})]}),
  T2=t=>new d.Paragraph({heading:d.HeadingLevel.HEADING_2,keepNext:true,spacing:{before:200,after:100},children:[new d.TextRun({text:t,bold:1,size:Z,font:FT})]}),
  TBW=(h,r,ws)=>{const cell=(t,i,hd)=>new d.TableCell({width:{size:ws[i],type:d.WidthType.PERCENTAGE},shading:hd?{type:d.ShadingType.CLEAR,fill:"D9E2EC",color:"auto"}:undefined,margins:{top:40,bottom:40,left:70,right:70},children:[new d.Paragraph({alignment:hd||h[i]=="No."?AL.CENTER:undefined,spacing:{after:0},children:[new d.TextRun({text:String(t??""),bold:!!hd,size:20,font:FT})]})]});
@@ -352,7 +352,7 @@ function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.t
   ...["Puji syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya sehingga Laporan Pendampingan Satuan Pendidikan Tahun "+th+" ini dapat diselesaikan.",
    "Laporan ini memuat hasil pemetaan kesadaran dan kapasitas perubahan, strategi serta skala prioritas pendampingan, pelaksanaan pendampingan pada Tahap I sampai Tahap IV, serta kesimpulan dan tindak lanjut. Penyusunan laporan didasarkan pada data Rapor Pendidikan, hasil diskusi, dan catatan pendampingan terhadap "+n+" satuan pendidikan dampingan.",
    "Kami menyampaikan terima kasih kepada kepala sekolah, guru, dan seluruh pihak yang telah mendukung pelaksanaan pendampingan. Kami menyadari laporan ini masih memiliki kekurangan, sehingga kritik dan saran yang membangun sangat kami harapkan. Semoga laporan ini bermanfaat bagi peningkatan mutu layanan pendidikan."].map(PG),
-  B("",{af:120}),sig([sgc([[""]]),sgc([[tgl],["Penyusun,"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])]),
+  B("",{af:120}),SGR([[tgl],["Penyusun,"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]]),
   CT("DAFTAR ISI",{sz:26,pb:1,af:240}),new d.TableOfContents("Daftar Isi",{hyperlink:true,headingStyleRange:"1-2"})],
  body=[
  T1("BAB I PENDAHULUAN",false),T2("A. Latar Belakang"),
@@ -392,7 +392,7 @@ function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.t
  T2("D. Temuan Utama"),...num([`Satuan pendidikan prioritas utama: ${nm(o.filter(s=>INFO[s.st].p=="Utama"))}.`,`Satuan pendidikan prioritas menengah: ${nm(o.filter(s=>INFO[s.st].p=="Menengah"))}.`,`Satuan pendidikan prioritas akhir: ${nm(o.filter(s=>INFO[s.st].p=="Akhir"))}.`,"Rincian akar masalah, potensi, harapan, ide program, kelebihan, kondisi nyata, dan rencana perbaikan tiap satuan pendidikan disajikan pada lampiran."]),
  T1("BAB V PENUTUP"),T2("A. Kesimpulan"),...num(kes_),T2("B. Saran dan Tindak Lanjut"),...num(sar_),
  PG("Demikian laporan ini disusun sebagai pertanggungjawaban pelaksanaan pendampingan satuan pendidikan. Atas perhatian dan dukungan semua pihak, kami mengucapkan terima kasih."),
- B("",{af:200}),sig([sgc([[""]]),sgc([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])])],
+ B("",{af:200}),SGR([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])],
  lamp=[T1("LAMPIRAN",false),...Object.keys(PT).filter(k=>k!="_").flatMap(k=>PT[k]())],
  PRG=X.prog,nop=L.nop||"……/……/"+th,
  cv2=[CT("PROGRAM KERJA PENGAWAS SEKOLAH",{sz:32,bf:1200,af:60}),...cover.slice(1)],
@@ -405,7 +405,7 @@ function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.t
   ...["Puji syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya sehingga Program Kerja Pengawas Sekolah Tahun "+th+" ini dapat diselesaikan.",
    "Program ini memuat landasan, hasil pemetaan kesadaran dan kapasitas perubahan, strategi serta skala prioritas pendampingan, rencana kegiatan Tahap I sampai Tahap IV, jadwal kunjungan, serta mekanisme monitoring, evaluasi, dan pelaporan terhadap "+n+" satuan pendidikan dampingan. Penyusunannya berpedoman pada data Rapor Pendidikan dan hasil diskusi dengan kepala sekolah.",
    "Kami mengucapkan terima kasih kepada Kepala Dinas, Korwas, kepala sekolah, guru, dan semua pihak yang mendukung penyusunan program ini. Kritik dan saran yang membangun sangat kami harapkan. Semoga program ini bermanfaat bagi peningkatan mutu layanan pendidikan."].map(PG),
-  B("",{af:120}),sig([sgc([[""]]),sgc([[tgl],["Penyusun,"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])]),
+  B("",{af:120}),SGR([[tgl],["Penyusun,"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]]),
   CT("DAFTAR ISI",{sz:26,pb:1,af:240}),new d.TableOfContents("Daftar Isi",{hyperlink:true,headingStyleRange:"1-2"})],
  bd2=[T1("BAB I PENDAHULUAN",false),T2("A. Latar Belakang"),
   PG("Pendidikan yang bermutu merupakan hak setiap warga negara dan menjadi tanggung jawab bersama seluruh pemangku kepentingan. Peningkatan mutu perlu didukung perencanaan berbasis data, kepemimpinan perubahan yang kuat di satuan pendidikan, dan pendampingan berkelanjutan dari pengawas sekolah."),
@@ -444,7 +444,7 @@ function LAP(X){const {d,AL,TB,sgc,PT,o,g,th}=X,L=D.lap||{},n=D.sk.length,pl=g.t
   T2("D. Pelaporan"),PG("Pelaporan dilaksanakan berkala tiap tahap dan ditutup dengan Laporan Pendampingan Satuan Pendidikan akhir tahun yang disusun dari data aplikasi ini."),
   T2("E. Dukungan dan Pembiayaan"),PG("Pelaksanaan program didukung anggaran dinas pendidikan dan sumber lain yang sah sesuai ketentuan. Rincian biaya diisi sesuai DPA yang berlaku."),
   T1("BAB V PENUTUP"),PG("Program kerja ini menjadi pedoman pelaksanaan pendampingan satuan pendidikan sepanjang tahun "+th+" dan dapat disesuaikan bila hasil monitoring menunjukkan perubahan kondisi satuan pendidikan. Demikian program kerja ini disusun; atas dukungan semua pihak kami mengucapkan terima kasih."),
-  B("",{af:200}),sig([sgc([[""]]),sgc([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])])],
+  B("",{af:200}),SGR([[tgl],["Penyusun, Pengawas Sekolah"],[""],[""],[""],[g.nama||"",1],["NIP. "+(g.nip||"")]])],
  ft=new d.Footer({children:[new d.Paragraph({alignment:AL.CENTER,children:[new d.TextRun({children:[d.PageNumber.CURRENT],font:FT,size:20})]})]}),
  mg={top:1701,bottom:1701,left:2268,right:1701},
  hs=(id,nme,sz,bf)=>({id,name:nme,basedOn:"Normal",next:"Normal",quickFormat:true,run:{font:FT,size:sz,bold:true,color:"000000"},paragraph:{spacing:{before:bf,after:120}}});
